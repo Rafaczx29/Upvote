@@ -3,40 +3,27 @@ import random
 import threading
 import time
 
-# SUMBER PROXY TERBARU (Langsung digunakan tanpa validasi)
+# SOURCE PROXY
 proxy_sources = [
-    # ProxyScrape (Update Harian)
     "https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&timeout=10000&country=all",
     "https://api.proxyscrape.com/v2/?request=getproxies&protocol=https&timeout=10000&country=all",
     "https://api.proxyscrape.com/v2/?request=getproxies&protocol=socks4&timeout=10000&country=all",
     "https://api.proxyscrape.com/v2/?request=getproxies&protocol=socks5&timeout=10000&country=all",
-
-    # Proxy-List (Update Harian)
     "https://www.proxy-list.download/api/v1/get?type=http",
     "https://www.proxy-list.download/api/v1/get?type=https",
     "https://www.proxy-list.download/api/v1/get?type=socks4",
     "https://www.proxy-list.download/api/v1/get?type=socks5",
-
-    # Free Proxy Lists (Update Berkala)
     "https://www.proxyscan.io/download?type=http",
     "https://www.proxyscan.io/download?type=https",
     "https://www.proxyscan.io/download?type=socks4",
     "https://www.proxyscan.io/download?type=socks5",
-
-    # Open Proxy Space (Banyak yang aktif)
     "https://openproxy.space/list/http",
     "https://openproxy.space/list/https",
     "https://openproxy.space/list/socks4",
     "https://openproxy.space/list/socks5",
-
-    # Spys.me (Beberapa proxy premium suka bocor)
     "https://spys.me/proxy.txt",
-
-    # Geonode (Kadang ada premium proxy)
     "https://www.geonode.com/free-proxy-list/",
     "https://proxylist.geonode.com/api/proxy-list?limit=300&page=1&sort_by=lastChecked&sort_type=desc",
-
-    # Sumber Proxy dari GitHub (Update Cepat)
     "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/http.txt",
     "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks4.txt",
     "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks5.txt",
@@ -54,8 +41,6 @@ proxy_sources = [
     "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks5.txt",
     "https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt",
     "https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/test/proxy.txt",
-
-    # Proxy dari berbagai negara (Update tidak menentu)
     "https://www.sslproxies.org/",
     "https://www.us-proxy.org/",
     "https://www.socks-proxy.net/",
@@ -91,6 +76,121 @@ proxy_sources = [
     "https://ghostealth.com/proxy-scraper",
     "https://iproyal.com/free-proxy-list/",
     "https://hide.mn/en/proxy-list/",
+    "https://raw.githubusercontent.com/mmpx12/proxy-list/master/http.txt",
+    "https://raw.githubusercontent.com/mmpx12/proxy-list/master/https.txt",
+    "https://raw.githubusercontent.com/mmpx12/proxy-list/master/socks4.txt",
+    "https://raw.githubusercontent.com/mmpx12/proxy-list/master/socks5.txt",
+    "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/http.txt",
+    "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/https.txt",
+    "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks4.txt",
+    "https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks5.txt",
+    "https://raw.githubusercontent.com/roosterkid/openproxylist/main/HTTPS_RAW.txt",
+    "https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS4_RAW.txt",
+    "https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS5_RAW.txt",
+    "https://proxy-spider.com/api/proxies.example",
+    "https://www.freeproxylists.net/",
+    "https://proxylist.me/",
+    "https://www.cool-proxy.net/",
+    "https://www.proxies24.com/",
+    "https://www.socks-proxy.net/",
+    "https://www.advanced-proxy.com/",
+    "https://www.getproxylist.com/api/proxy",
+    "https://multiproxy.org/txt_all/proxy.txt",
+    "https://www.proxyserverlist24.top/",
+    "https://proxyhub.me/en/free-proxy-list.html",
+    "https://www.proxynova.com/proxy-server-list/",
+    "https://www.sslproxies.org/",
+    "https://www.us-proxy.org/",
+    "https://www.socks-proxy.net/",
+    "https://free-proxy-list.net/",
+    "https://www.proxy-list.download/HTTP",
+    "https://www.proxy-list.download/HTTPS",
+    "https://www.proxy-list.download/SOCKS4",
+    "https://www.proxy-list.download/SOCKS5",
+    "https://www.proxyscan.io/download?type=http",
+    "https://www.proxyscan.io/download?type=https",
+    "https://www.proxyscan.io/download?type=socks4",
+    "https://www.proxyscan.io/download?type=socks5",
+    "https://spys.one/en/free-proxy-list/",
+    "https://www.freeproxy.world/",
+    "https://proxy-daily.com/",
+    "https://www.proxylists.net/",
+    "https://www.proxylists.net/http_highanon.txt",
+    "https://www.proxylists.net/https_highanon.txt",
+    "https://www.proxylists.net/socks4.txt",
+    "https://www.proxylists.net/socks5.txt",
+    "https://www.my-proxy.com/free-proxy-list.html",
+    "https://www.my-proxy.com/free-anonymous-proxy.html",
+    "https://www.my-proxy.com/free-elite-proxy.html",
+    "https://www.my-proxy.com/free-transparent-proxy.html",
+    "https://www.my-proxy.com/free-socks-4-proxy.html",
+    "https://www.my-proxy.com/free-socks-5-proxy.html",
+    "https://www.my-proxy.com/free-proxy-list-1.html",
+    "https://www.my-proxy.com/free-proxy-list-2.html",
+    "https://www.my-proxy.com/free-proxy-list-3.html",
+    "https://www.my-proxy.com/free-proxy-list-4.html",
+    "https://www.my-proxy.com/free-proxy-list-5.html",
+    "https://www.my-proxy.com/free-proxy-list-6.html",
+    "https://www.my-proxy.com/free-proxy-list-7.html",
+    "https://www.my-proxy.com/free-proxy-list-8.html",
+    "https://www.my-proxy.com/free-proxy-list-9.html",
+    "https://www.my-proxy.com/free-proxy-list-10.html",
+    "https://www.my-proxy.com/free-proxy-list-11.html",
+    "https://www.my-proxy.com/free-proxy-list-12.html",
+    "https://www.my-proxy.com/free-proxy-list-13.html",
+    "https://www.my-proxy.com/free-proxy-list-14.html",
+    "https://www.my-proxy.com/free-proxy-list-15.html",
+    "https://www.my-proxy.com/free-proxy-list-16.html",
+    "https://www.my-proxy.com/free-proxy-list-17.html",
+    "https://www.my-proxy.com/free-proxy-list-18.html",
+    "https://www.my-proxy.com/free-proxy-list-19.html",
+    "https://www.my-proxy.com/free-proxy-list-20.html",
+    "https://www.my-proxy.com/free-proxy-list-21.html",
+    "https://www.my-proxy.com/free-proxy-list-22.html",
+    "https://www.my-proxy.com/free-proxy-list-23.html",
+    "https://www.my-proxy.com/free-proxy-list-24.html",
+    "https://www.my-proxy.com/free-proxy-list-25.html",
+    "https://www.my-proxy.com/free-proxy-list-26.html",
+    "https://www.my-proxy.com/free-proxy-list-27.html",
+    "https://www.my-proxy.com/free-proxy-list-28.html",
+    "https://www.my-proxy.com/free-proxy-list-29.html",
+    "https://www.my-proxy.com/free-proxy-list-30.html",
+    "https://www.my-proxy.com/free-proxy-list-31.html",
+    "https://www.my-proxy.com/free-proxy-list-32.html",
+    "https://www.my-proxy.com/free-proxy-list-33.html",
+    "https://www.my-proxy.com/free-proxy-list-34.html",
+    "https://www.my-proxy.com/free-proxy-list-35.html",
+    "https://www.my-proxy.com/free-proxy-list-36.html",
+    "https://www.my-proxy.com/free-proxy-list-37.html",
+    "https://www.my-proxy.com/free-proxy-list-38.html",
+    "https://www.my-proxy.com/free-proxy-list-39.html",
+    "https://www.my-proxy.com/free-proxy-list-40.html",
+    "https://www.my-proxy.com/free-proxy-list-41.html",
+    "https://www.my-proxy.com/free-proxy-list-42.html",
+    "https://www.my-proxy.com/free-proxy-list-43.html",
+    "https://www.my-proxy.com/free-proxy-list-44.html",
+    "https://www.my-proxy.com/free-proxy-list-45.html",
+    "https://www.my-proxy.com/free-proxy-list-46.html",
+    "https://www.my-proxy.com/free-proxy-list-47.html",
+    "https://www.my-proxy.com/free-proxy-list-48.html",
+    "https://www.my-proxy.com/free-proxy-list-49.html",
+    "https://www.my-proxy.com/free-proxy-list-50.html",
+    "https://www.my-proxy.com/free-proxy-list-51.html",
+    "https://www.my-proxy.com/free-proxy-list-52.html",
+    "https://www.my-proxy.com/free-proxy-list-53.html",
+    "https://www.my-proxy.com/free-proxy-list-54.html",
+    "https://www.my-proxy.com/free-proxy-list-55.html",
+    "https://www.my-proxy.com/free-proxy-list-56.html",
+    "https://www.my-proxy.com/free-proxy-list-57.html",
+    "https://www.my-proxy.com/free-proxy-list-58.html",
+    "https://www.my-proxy.com/free-proxy-list-59.html",
+    "https://www.my-proxy.com/free-proxy-list-60.html",
+    "https://www.my-proxy.com/free-proxy-list-61.html",
+    "https://www.my-proxy.com/free-proxy-list-62.html",
+    "https://www.my-proxy.com/free-proxy-list-63.html",
+    "https://www.my-proxy.com/free-proxy-list-64.html",
+    "https://www.my-proxy.com/free-proxy-list-65.html",
+    "https://www.my-proxy.com/free-proxy-list-66.html",
 ]
 
 url_vote = "https://disqus.com/api/3.0/threadReactions/vote"
@@ -111,7 +211,7 @@ payload = {
     "api_key": "E8Uh5l5fHZ6gD8U3KycjAIAk46f68Zw7C6eW8WSjZvCLXebZ7p0r1yrYDrLilk2F"
 }
 
-# Ambil semua proxy tanpa validasi
+# PROXY
 def get_proxies():
     proxies = set()
     threads = []
@@ -137,7 +237,7 @@ def get_proxies():
 
     return list(proxies)
 
-# Fungsi voting dengan proxy tertentu
+# PROXY
 def vote(proxy):
     headers = {
         "User-Agent": random.choice(user_agents),
@@ -154,7 +254,7 @@ def vote(proxy):
     except:
         pass
 
-# Main function dengan loop otomatis
+# AUTO LOOPING
 def main():
     for loop in range(loop_count):
         print(f"\n🔄 Loop {loop+1} dari {loop_count} - Mengambil proxy terbaru...")
@@ -166,7 +266,7 @@ def main():
 
         print(f"✅ Dapat {len(proxies_list)} proxy! Mulai voting...")
 
-        num_threads = 5000  # Jalankan 50 vote sekaligus
+        num_threads = 5000  # THREAD PER RUNNING
         for i in range(0, len(proxies_list), num_threads):
             threads = []
             for proxy in proxies_list[i:i + num_threads]:
@@ -178,7 +278,7 @@ def main():
                 t.join()
 
         print(f"✅ Loop {loop+1} selesai! Menunggu sebelum loop berikutnya...\n")
-        time.sleep(random.uniform(1, 2))  # Delay sebelum loop berikutnya untuk keamanan
+        time.sleep(random.uniform(1, 2))  # DELAY RANDOM
 
 if __name__ == "__main__":
     main()
