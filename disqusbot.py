@@ -266,7 +266,7 @@ def main():
 
         print(f"✅ Dapat {len(proxies_list)} proxy! Mulai voting...")
 
-        num_threads = 5000  # THREAD PER RUNNING
+        num_threads = 200000  # THREAD PER RUNNING
         for i in range(0, len(proxies_list), num_threads):
             threads = []
             for proxy in proxies_list[i:i + num_threads]:
