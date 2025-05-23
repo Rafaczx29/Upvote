@@ -50,7 +50,7 @@ Jika ingin mengatur **proxy, delay, atau parameter lainnya**, edit langsung di d
 
 ## 🖥️ Screenshot  
 
-> (Tambahkan screenshot di sini jika ada)  
+> ![Screenshot_2025-05-23-17-11-53-831-edit_com termux](https://github.com/user-attachments/assets/018101f1-e859-4d0c-9e84-8ccca7697012)
 
 ---
 
