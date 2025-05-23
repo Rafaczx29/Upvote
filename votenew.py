@@ -1,9 +1,16 @@
 import requests
 import threading
 import time
+import os
+from pyfiglet import figlet_format
+from tqdm import tqdm
 
 # ANSI warna
 GREEN = '\033[92m'
+RED = '\033[91m'
+YELLOW = '\033[93m'
+CYAN = '\033[96m'
+MAGENTA = '\033[95m'
 RESET = '\033[0m'
 
 proxy_sources = [
@@ -18,13 +25,18 @@ proxy_sources = [
     "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt"
 ]
 
+vote_success_count = 0
+success_lock = threading.Lock()
+
+def clear_screen():
+    os.system("cls" if os.name == "nt" else "clear")
+
 def fetch_proxies():
     proxies = set()
     for url in proxy_sources:
         try:
             r = requests.get(url, timeout=10)
             if r.status_code == 200:
-                text = r.text
                 if 'geonode' in url:
                     data = r.json()
                     for item in data.get('data', []):
@@ -33,7 +45,7 @@ def fetch_proxies():
                         if ip and port:
                             proxies.add(f"{ip}:{port}")
                 else:
-                    lines = text.strip().split('\n')
+                    lines = r.text.strip().split('\n')
                     for line in lines:
                         line = line.strip()
                         if line and ':' in line:
@@ -42,7 +54,8 @@ def fetch_proxies():
             pass
     return list(proxies)
 
-def vote(proxy, path):
+def vote(proxy, path, pbar, target):
+    global vote_success_count
     url = "https://commento.shngm.io/api/article?lang=en"
     headers = {
         "Host": "commento.shngm.io",
@@ -63,52 +76,74 @@ def vote(proxy, path):
     try:
         resp = requests.post(url, headers=headers, json=payload, proxies=proxies, timeout=10)
         if resp.status_code == 200:
-            print(f"{GREEN}Vote sukses via proxy {proxy}{RESET}")
+            with success_lock:
+                if vote_success_count < target:
+                    vote_success_count += 1
+                    pbar.update(1)
     except Exception:
         pass
 
-def worker(path, proxies, index_lock):
+def worker(path, proxies, index_lock, pbar, target):
     while True:
+        with success_lock:
+            if vote_success_count >= target:
+                break
         with index_lock:
             if not proxies:
                 break
             proxy = proxies.pop()
-        vote(proxy, path)
-        time.sleep(1)
+        vote(proxy, path, pbar, target)
+        time.sleep(0.3)
+
+def tampil_banner():
+    print(f"{GREEN}{figlet_format('Auto Vote', font='slant')}{RESET}")
+    print(f"{CYAN}Dibuat oleh {MAGENTA}@Rafaczx{CYAN} | Powered by AutoProxy{RESET}\n")
 
 def main():
-    path = input("Input Link Tujuan Lu: ").strip()
-    loop_count = input("Mau diulang berapa kali? (ketik angka): ").strip()
+    clear_screen()
+    tampil_banner()
+
+    print(f"{YELLOW}[?]{RESET} Input Link Tujuan Lu: ", end="")
+    path = input().strip()
 
     try:
-        loop_count = int(loop_count)
-        if loop_count < 1:
-            print("Minimal loop 1 ya, jadi default 1")
-            loop_count = 1
+        print(f"{YELLOW}[?]{RESET} Total vote yang lu inginkan berapa banyak?: ", end="")
+        target = int(input().strip())
     except ValueError:
-        print("Input bukan angka, default loop = 1")
-        loop_count = 1
+        print(f"{RED}[!] Input bukan angka. Default = 100{RESET}")
+        target = 100
 
-    for i in range(loop_count):
-        print(f"\n=== Loop ke-{i+1} dimulai ===")
-        print("Mengambil proxy gratisan...")
+    global vote_success_count
+    vote_success_count = 0
+    loop_count = 0
+
+    pbar = tqdm(total=target, desc="Total Vote Sukses", bar_format="{l_bar}%s{bar}%s{r_bar}" % (GREEN, RESET))
+
+    while vote_success_count < target:
+        loop_count += 1
+        print(f"\n{CYAN}=== Loop ke-{loop_count} dimulai ==={RESET}")
+        print(f"{YELLOW}[i]{RESET} Mengambil proxy untuk memproses...")
         proxies = fetch_proxies()
-        print(f"Proxy ditemukan: {len(proxies)}")
+        print(f"{MAGENTA}[+] Proxy ditemukan: {len(proxies)}{RESET}")
 
         index_lock = threading.Lock()
         threads = []
-        for _ in range(1000):
-            t = threading.Thread(target=worker, args=(path, proxies, index_lock))
+
+        for _ in range(200):  # jumlah thread
+            t = threading.Thread(target=worker, args=(path, proxies, index_lock, pbar, target))
             t.start()
             threads.append(t)
 
         for t in threads:
             t.join()
 
-        print(f"Selesai vote loop ke-{i+1}.\n")
-        # Bisa tambahin delay di sini kalau mau, misal time.sleep(5)
+        print(f"{CYAN}Selesai vote loop ke-{loop_count}.{RESET}")
 
-    print("Semua loop selesai.")
+    pbar.close()
+    print(f"\n{GREEN}{'='*44}")
+    print(f"   Target {target} vote sukses tercapai!")
+    print(f"{'='*44}{RESET}")
+    print(f"{MAGENTA}Terima kasih telah menggunakan AutoProxy by Rafaczx!{RESET}")
 
 if __name__ == "__main__":
     main()
